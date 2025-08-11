@@ -5,18 +5,21 @@ import model.Item;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import static util.TaxConstants.*;
+
 public class TaxCalculator {
-    private static final BigDecimal BASIC_TAX_RATE = new BigDecimal("0.10");
-    private static final BigDecimal IMPORT_TAX_RATE = new BigDecimal("0.05");
-    private static final BigDecimal ROUNDING_FACTOR = new BigDecimal("0.05");
 
     public BigDecimal calculateUnitTax(Item item) {
-        if (item.isExempt()) return BigDecimal.ZERO;
-        
-        BigDecimal tax = item.getPrice().multiply(BASIC_TAX_RATE);
+        BigDecimal tax = BigDecimal.ZERO;
+
+        if (!item.isExempt()) {
+            tax = tax.add(item.getPrice().multiply(BASIC_TAX_RATE));
+        }
+
         if (item.isImported()) {
             tax = tax.add(item.getPrice().multiply(IMPORT_TAX_RATE));
         }
+
         return roundTax(tax);
     }
 
